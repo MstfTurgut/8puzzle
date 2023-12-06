@@ -83,7 +83,13 @@ public class Board {
     @Override
     public boolean equals(Object y) {
 
+        if(y == this) return true;
+
         if(y == null) return false;
+
+        if(this.getClass() != y.getClass())
+            return false;
+
 
         Board thatBoard = (Board) y;
 
