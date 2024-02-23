@@ -7,11 +7,10 @@ public class Solver {
     private boolean solvable = true;
 
     private static class SearchNode implements Comparable<SearchNode> {
-
         private final Board board;
         private final int moves;
         private final int manhattan;
-        private final SearchNode  prevSearchNode;
+        private final SearchNode prevSearchNode;
 
         public SearchNode(Board board, int moves, SearchNode prevSearchNode) {
             this.board = board;
@@ -22,64 +21,54 @@ public class Solver {
 
         @Override
         public int compareTo(SearchNode o) {
-            return Integer.compare(manhattan + moves , o.manhattan + o.moves);
+            return Integer.compare(manhattan + moves, o.manhattan + o.moves);
         }
     }
 
-    // find a solution to the initial board (using the A* algorithm)
+    // Find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
-
-        if(initial == null) {
+        if (initial == null) {
             throw new IllegalArgumentException();
         }
 
         Board initialTwin = initial.twin();
-
         MinPQ<SearchNode> pq = new MinPQ<>();
         MinPQ<SearchNode> pqTwin = new MinPQ<>();
 
-        minNode = new SearchNode(initial , 0 , null);
+        minNode = new SearchNode(initial, 0, null);
         SearchNode minNodeTwin = new SearchNode(initialTwin, 0, null);
 
         pq.insert(minNode);
         pqTwin.insert(minNodeTwin);
 
         while (!minNode.board.isGoal()) {
-
             SearchNode min = pq.delMin();
             SearchNode minTwin = pqTwin.delMin();
 
             for (Board board : min.board.neighbors()) {
-                if(min.prevSearchNode != null ) {
-                    if(!board.equals(min.prevSearchNode.board)) {
-                        pq.insert(new SearchNode(board, moves() + 1, min));
-                    }
+                if (min.prevSearchNode != null && !board.equals(min.prevSearchNode.board)) {
+                    pq.insert(new SearchNode(board, min.moves + 1, min));
                 } else {
-                    pq.insert(new SearchNode(board, moves() + 1, min));
-                }
-            }
-            for (Board board : minTwin.board.neighbors()) {
-                if(minTwin.prevSearchNode != null ) {
-                    if(!board.equals(minTwin.prevSearchNode.board)) {
-                        pqTwin.insert(new SearchNode(board, moves() + 1, minTwin));
-                    }
-                } else {
-                    pqTwin.insert(new SearchNode(board, moves() + 1, minTwin));
+                    pq.insert(new SearchNode(board, min.moves + 1, min));
                 }
             }
 
+            for (Board board : minTwin.board.neighbors()) {
+                if (minTwin.prevSearchNode != null && !board.equals(minTwin.prevSearchNode.board)) {
+                    pqTwin.insert(new SearchNode(board, minTwin.moves + 1, minTwin));
+                } else {
+                    pqTwin.insert(new SearchNode(board, minTwin.moves + 1, minTwin));
+                }
+            }
 
             minNode = pq.min();
             minNodeTwin = pqTwin.min();
 
-            if(minNodeTwin.board.isGoal()) {
+            if (minNodeTwin.board.isGoal()) {
                 solvable = false;
                 break;
             }
         }
-
-
-
     }
 
     public boolean isUnsolvable() {
