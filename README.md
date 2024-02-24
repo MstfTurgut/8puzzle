@@ -33,6 +33,20 @@ For example, the following diagram illustrates the game tree after each of the f
 ![Diagram2](assets/diagram2.png)
 
 <br>
+
+## Detecting Unsolvable Boards
+
+Not all initial boards can lead to the goal board by a sequence of moves, including these two:
+
+![Diagram3](assets/diagram3.png)
+
+To detect such situations, we use the fact that boards are divided into two equivalence classes with respect to reachability:
+
+* Those that can lead to the goal board
+
+* Those that can lead to the goal board if we modify the initial board by swapping any pair of tiles (the blank square is not a tile).
+
+<br>
 <br>
 
 Mustafa Turgut   
